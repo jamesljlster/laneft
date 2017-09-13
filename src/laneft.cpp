@@ -179,6 +179,7 @@ void laneft::generate_line(std::vector<struct POINT>& line, struct POINT startPo
                 {
                     line.push_back(tmpPoint);
                     hashSpace.at(tmpRow * HASH_SPACE + tmpCol).erase(hashSpace.at(tmpRow * HASH_SPACE + tmpCol).begin() + k);
+					k--;
 
                     generate_line(line, tmpPoint);
                 }
