@@ -4,7 +4,7 @@ set(DEPS_PATHS
 include_directories(${DEPS_PATHS})
 
 # Find other dependences
-set(OpenCV_STATIC ON)
+set(OpenCV_STATIC OFF CACHE BOOL "Using OpenCV static linking library")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
