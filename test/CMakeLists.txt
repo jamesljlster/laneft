@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Set variables
 set(PROJECT_NAME laneft_test)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS ${OpenCV_LIBS})
+set(PROJECT_DEPS laneft ${OpenCV_LIBS})
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -26,6 +26,14 @@ file(GLOB PROJECT_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/*.c
 	${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 	)
+
+file(GLOB TEST_IMGS
+	${CMAKE_CURRENT_SOURCE_DIR}/*.jpeg
+	${CMAKE_CURRENT_SOURCE_DIR}/*.jpg
+	)
+
+# Install test images
+install(FILES ${TEST_IMGS} DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
 
 # Build test
 foreach(TEST_FILE_PATH ${PROJECT_SRCS})
