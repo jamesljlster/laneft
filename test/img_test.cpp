@@ -52,6 +52,15 @@ void draw_ctrl_simulation(Mat& img, int x, int y)
     line(img, Point(img.cols / 2, 0), Point(img.cols / 2, img.rows), Scalar(0, 0, 255), 2);
 
     // Draw control point
+	if(x >= img.cols)
+	{
+		x = img.cols - 1;
+	}
+	if(x < 0)
+	{
+		x = 0;
+	}
+
     circle(img, Point(x, y), 5, Scalar(0, 0, 255), 2);
 }
 
