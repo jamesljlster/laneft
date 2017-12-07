@@ -253,7 +253,7 @@ void laneft::clean_line(int imgWidth)
 			{
 				if(lineHandle.at(i).at(j).y == lineHandle.at(i).at(j - 1).y)
 				{
-					if(lineHandle.at(i).at(j).x >= lineHandle.at(i).at(j - 1).x)
+					if(lineHandle.at(i).at(j).x <= lineHandle.at(i).at(j - 1).x)
 					{
 						lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
 						j--;
@@ -263,11 +263,11 @@ void laneft::clean_line(int imgWidth)
 		}
 		else
 		{
-			for(unsigned int j = 1; j < lineHandle.at(i).size(); j++)
+			for(unsigned int j = 0; j < lineHandle.at(i).size() - 1; j++)
 			{
-				if(lineHandle.at(i).at(j).y == lineHandle.at(i).at(j - 1).y)
+				if(lineHandle.at(i).at(j).y == lineHandle.at(i).at(j + 1).y)
 				{
-					if(lineHandle.at(i).at(j).x <= lineHandle.at(i).at(j - 1).x)
+					if(lineHandle.at(i).at(j).x >= lineHandle.at(i).at(j + 1).x)
 					{
 						lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
 						j--;
