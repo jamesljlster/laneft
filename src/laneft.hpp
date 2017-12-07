@@ -5,10 +5,10 @@
 
 class laneft
 {
-    struct POINT
-    {
-        int x;
-        int y;
+	struct POINT
+	{
+		int x;
+		int y;
 
 		bool operator > (const POINT& cmp) const
 		{
@@ -49,45 +49,45 @@ class laneft
 		{
 			return ! (*this > cmp || *this == cmp);
 		}
-    };
+	};
 
-public:
-    laneft();
-    ~laneft();
+	public:
+		laneft();
+		~laneft();
 
-    double get_feature(unsigned char* src, int srcWidth, int srcHeight);
+		double get_feature(unsigned char* src, int srcWidth, int srcHeight);
 
-    void set_find_point_rule(int maskSize, int threshold);
-    void set_find_line_rule(int maxDist, int threshold);
-    void set_line_height_filter(int threshold);
+		void set_find_point_rule(int maskSize, int threshold);
+		void set_find_line_rule(int maxDist, int threshold);
+		void set_line_height_filter(int threshold);
 
-protected:
-    std::vector<struct POINT> ptList;
-    std::vector< std::vector<struct POINT> > hashSpace;
-    std::vector< std::vector<struct POINT> > lineHandle;
+	protected:
+		std::vector<struct POINT> ptList;
+		std::vector< std::vector<struct POINT> > hashSpace;
+		std::vector< std::vector<struct POINT> > lineHandle;
 
-    void clear_hash_space();
-    void del_hash_space();
-    void clear_line_handle();
-    void del_line_handle();
+		void clear_hash_space();
+		void del_hash_space();
+		void clear_line_handle();
+		void del_line_handle();
 
-    void find_point_list(unsigned char* src, int srcWidth, int srcHeight);
-    void generate_line(std::vector<struct POINT>& line, struct POINT startPoint);
-    void find_line();
-	void clean_line(int imgWidth);
-    void line_height_filter();
-    double line_to_feature(int imgWidth);
+		void find_point_list(unsigned char* src, int srcWidth, int srcHeight);
+		void generate_line(std::vector<struct POINT>& line, struct POINT startPoint);
+		void find_line();
+		void clean_line(int imgWidth);
+		void line_height_filter();
+		double line_to_feature(int imgWidth);
 
-    int sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row, int col);
+		int sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row, int col);
 
-    int hashRowStep;
-    int hashColStep;
+		int hashRowStep;
+		int hashColStep;
 
-    int maskSize;
-    int pointTh;
-    int maxDist;
-    int lineTh;
-    int lineHeightTh;
+		int maskSize;
+		int pointTh;
+		int maxDist;
+		int lineTh;
+		int lineHeightTh;
 };
 
 #endif // LANEFT_HPP_INCLUDED
