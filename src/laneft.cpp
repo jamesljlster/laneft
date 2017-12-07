@@ -301,11 +301,13 @@ double laneft::line_to_feature(int imgWidth)
         avgPoint.y = lineHandle.at(i).at(0).y;
         for(j = 1; j < lineHandle.at(i).size(); j++)
         {
+			/*
             if(tmpPoint.y < lineHandle.at(i).at(j).y)
             {
                 tmpPoint.y = lineHandle.at(i).at(j).y;
                 tmpPoint.x = lineHandle.at(i).at(j).x;
             }
+			*/
 
             avgPoint.x += lineHandle.at(i).at(j).x;
             avgPoint.y += lineHandle.at(i).at(j).y;
