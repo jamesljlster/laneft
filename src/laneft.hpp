@@ -9,6 +9,46 @@ class laneft
     {
         int x;
         int y;
+
+		bool operator > (const POINT& cmp) const
+		{
+			if(this->y > cmp.y)
+			{
+				return true;
+			}
+			else if(this->y == cmp.y)
+			{
+				if(this->x > cmp.x)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		bool operator == (const POINT& cmp) const
+		{
+			if(this->y == cmp.y && this->x == cmp.x)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		bool operator < (const POINT& cmp) const
+		{
+			return ! (*this > cmp || *this == cmp);
+		}
     };
 
 public:
@@ -34,6 +74,7 @@ protected:
     void find_point_list(unsigned char* src, int srcWidth, int srcHeight);
     void generate_line(std::vector<struct POINT>& line, struct POINT startPoint);
     void find_line();
+	void clean_line(int imgWidth);
     void line_height_filter();
     double line_to_feature(int imgWidth);
 

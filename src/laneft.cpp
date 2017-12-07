@@ -1,3 +1,5 @@
+#include <functional>
+#include <algorithm>
 
 #include "laneft.hpp"
 
@@ -8,6 +10,8 @@
 #define DEFAULT_MAX_DIST    9
 #define DEFAULT_LINE_TH     0
 #define DEFAULT_LINE_H_TH   0
+
+using namespace std;
 
 laneft::laneft()
 {
@@ -233,6 +237,47 @@ void laneft::find_line()
     }
 }
 
+// Clean line handle, reserve the closest point to side only.
+void laneft::clean_line(int imgWidth)
+{
+	for(unsigned int i = 0; i < lineHandle.size(); i++)
+	{
+		// Sort line handle
+		sort(lineHandle.at(i).begin(), lineHandle.at(i).end(), greater<POINT>());
+
+		// Clean point
+		struct POINT tmpPoint = lineHandle.at(i).at(0);
+        if(tmpPoint.x < imgWidth / 2)
+        {
+			for(unsigned int j = 1; j < lineHandle.at(i).size(); j++)
+			{
+				if(lineHandle.at(i).at(j).y == lineHandle.at(i).at(j - 1).y)
+				{
+					if(lineHandle.at(i).at(j).x >= lineHandle.at(i).at(j - 1).x)
+					{
+						lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
+						j--;
+					}
+				}
+			}
+        }
+        else
+        {
+			for(unsigned int j = 1; j < lineHandle.at(i).size(); j++)
+			{
+				if(lineHandle.at(i).at(j).y == lineHandle.at(i).at(j - 1).y)
+				{
+					if(lineHandle.at(i).at(j).x <= lineHandle.at(i).at(j - 1).x)
+					{
+						lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
+						j--;
+					}
+				}
+			}
+        }
+	}
+}
+
 double laneft::line_to_feature(int imgWidth)
 {
     unsigned int i, j;
@@ -313,6 +358,9 @@ double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
     {
         line_height_filter();
     }
+
+	// Clean line
+	clean_line(srcWidth);
 
     return line_to_feature(srcWidth);
 }
