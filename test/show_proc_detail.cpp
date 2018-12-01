@@ -10,70 +10,71 @@ void draw_ctrl_simulation(Mat& img, int x, int y);
 
 int main(int argc, char* argv[])
 {
-	// Checking
-	if(argc <= 1)
-	{
-		cout << "Pass image to run the test" << endl;
-		return -1;
-	}
+    // Checking
+    if (argc <= 1)
+    {
+        cout << "Pass image to run the test" << endl;
+        return -1;
+    }
 
-	// Loop for testing
-	for(int i = 1; i < argc; i++)
-	{
-		// Load image
-		Mat src = imread(argv[i], CV_LOAD_IMAGE_COLOR);
-		if(src.empty())
-		{
-			cout << "Failed to load " << argv[i] << endl;
-			return -1;
-		}
+    // Loop for testing
+    for (int i = 1; i < argc; i++)
+    {
+        // Load image
+        Mat src = imread(argv[i], CV_LOAD_IMAGE_COLOR);
+        if (src.empty())
+        {
+            cout << "Failed to load " << argv[i] << endl;
+            return -1;
+        }
 
-		imshow("Origin Image", src);
+        imshow("Origin Image", src);
 
-		// Process canny
-		Mat canny;
-		Canny(src, canny, 255, 255);
-		imshow("Canny", canny);
+        // Process canny
+        Mat canny;
+        Canny(src, canny, 255, 255);
+        imshow("Canny", canny);
 
-		// Draw control simulation
-		Mat cannyWithLine;
-		cvtColor(canny, cannyWithLine, CV_GRAY2BGR);
+        // Draw control simulation
+        Mat cannyWithLine;
+        cvtColor(canny, cannyWithLine, CV_GRAY2BGR);
 
-		laneft_ocv laneFt;
+        laneft_ocv laneFt;
         double ctrlFeature = laneFt.get_feature(canny);
         laneFt.draw_line_onto(src);
 
         laneFt.draw_line_onto(cannyWithLine);
-		imshow("Canny with Line", cannyWithLine);
+        imshow("Canny with Line", cannyWithLine);
 
         draw_ctrl_simulation(src, src.cols / 2 - ctrlFeature, src.rows / 4 * 3);
-		imshow("Result", src);
+        imshow("Result", src);
 
-        draw_ctrl_simulation(cannyWithLine, src.cols / 2 - ctrlFeature, src.rows / 4 * 3);
-		imshow("Canny Result", cannyWithLine);
+        draw_ctrl_simulation(cannyWithLine, src.cols / 2 - ctrlFeature,
+                             src.rows / 4 * 3);
+        imshow("Canny Result", cannyWithLine);
 
-		// Show result
-		waitKey(0);
-	}
+        // Show result
+        waitKey(0);
+    }
 
-	return 0;
+    return 0;
 }
 
 void draw_ctrl_simulation(Mat& img, int x, int y)
 {
     // Draw vertical line
-    line(img, Point(img.cols / 2, 0), Point(img.cols / 2, img.rows), Scalar(0, 0, 255), 2);
+    line(img, Point(img.cols / 2, 0), Point(img.cols / 2, img.rows),
+         Scalar(0, 0, 255), 2);
 
     // Draw control point
-	if(x >= img.cols)
-	{
-		x = img.cols - 1;
-	}
-	if(x < 0)
-	{
-		x = 0;
-	}
+    if (x >= img.cols)
+    {
+        x = img.cols - 1;
+    }
+    if (x < 0)
+    {
+        x = 0;
+    }
 
     circle(img, Point(x, y), 5, Scalar(0, 0, 255), 2);
 }
-
