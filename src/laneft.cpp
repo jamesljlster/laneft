@@ -53,78 +53,90 @@ bool laneft::POINT::operator<(const POINT& cmp) const
     return !(*this > cmp || *this == cmp);
 }
 
-laneft::laneft()
+laneft::laneft() { this->laneft_init(laneft::LANE_TYPE::LANE); }
+laneft::laneft(enum LANE_TYPE laneType) { this->laneft_init(laneType); }
+
+void laneft::set_lane_type(enum laneft::LANE_TYPE laneType)
+{
+    this->laneType = laneType;
+}
+
+void laneft::laneft_init(enum laneft::LANE_TYPE laneType)
 {
     // Clear point list
-    ptList.clear();
+    this->ptList.clear();
 
     // Create hash space
-    hashSpace.resize(HASH_SPACE * HASH_SPACE);
+    this->hashSpace.resize(HASH_SPACE * HASH_SPACE);
     for (int i = 0; i < HASH_SPACE * HASH_SPACE; i++)
     {
-        hashSpace.at(i).clear();
+        this->hashSpace.at(i).clear();
     }
 
     // Clear line handle
-    lineHandle.clear();
+    this->lineHandle.clear();
 
     // Set default setting
-    maskSize = DEFAULT_MASK_SIZE;
-    pointTh = DEFAULT_POINT_TH;
-    maxDist = DEFAULT_MAX_DIST;
-    lineTh = DEFAULT_LINE_TH;
-    lineHeightTh = DEFAULT_LINE_H_TH;
+    this->laneType = laneType;
+    this->maskSize = DEFAULT_MASK_SIZE;
+    this->pointTh = DEFAULT_POINT_TH;
+    this->maxDist = DEFAULT_MAX_DIST;
+    this->lineTh = DEFAULT_LINE_TH;
+    this->lineHeightTh = DEFAULT_LINE_H_TH;
 }
 
 laneft::~laneft()
 {
-    ptList.clear();
+    this->ptList.clear();
     del_hash_space();
     del_line_handle();
 }
 
 void laneft::set_find_point_rule(int maskSize, int threshold)
 {
-    maskSize = maskSize;
-    pointTh = threshold;
+    this->maskSize = this->maskSize;
+    this->pointTh = threshold;
 }
 
 void laneft::set_find_line_rule(int maxDist, int threshold)
 {
-    maxDist = maxDist;
-    lineTh = threshold;
+    this->maxDist = this->maxDist;
+    this->lineTh = threshold;
 }
 
-void laneft::set_line_height_filter(int threshold) { lineHeightTh = threshold; }
+void laneft::set_line_height_filter(int threshold)
+{
+    this->lineHeightTh = threshold;
+}
 
 void laneft::clear_hash_space()
 {
     // Clear hash space
     for (int i = 0; i < HASH_SPACE * HASH_SPACE; i++)
     {
-        hashSpace.at(i).clear();
+        this->hashSpace.at(i).clear();
     }
 }
 
 void laneft::del_hash_space()
 {
     clear_hash_space();
-    hashSpace.clear();
+    this->hashSpace.clear();
 }
 
 void laneft::clear_line_handle()
 {
     // Clear line handle
-    for (unsigned int i = 0; i < lineHandle.size(); i++)
+    for (unsigned int i = 0; i < this->lineHandle.size(); i++)
     {
-        lineHandle.at(i).clear();
+        this->lineHandle.at(i).clear();
     }
 }
 
 void laneft::del_line_handle()
 {
     clear_line_handle();
-    lineHandle.clear();
+    this->lineHandle.clear();
 }
 
 int laneft::sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row,
@@ -134,17 +146,17 @@ int laneft::sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row,
     int tmpRow, tmpCol;
     int result = 0;
 
-    for (i = 0; i < maskSize; i++)
+    for (i = 0; i < this->maskSize; i++)
     {
-        tmpRow = i - maskSize / 2 + row;
+        tmpRow = i - this->maskSize / 2 + row;
         if (tmpRow < 0 || tmpRow >= srcHeight)
         {
             return 0;
         }
 
-        for (j = 0; j < maskSize; j++)
+        for (j = 0; j < this->maskSize; j++)
         {
-            tmpCol = j - maskSize / 2 + col;
+            tmpCol = j - this->maskSize / 2 + col;
             if (tmpCol < 0 || tmpCol >= srcWidth)
             {
                 return 0;
@@ -163,10 +175,10 @@ void laneft::find_point_list(unsigned char* src, int srcWidth, int srcHeight)
     int tmpTh;
     struct POINT tmpPoint;
 
-    tmpTh = maskSize * maskSize * pointTh;
+    tmpTh = this->maskSize * this->maskSize * this->pointTh;
 
     // Clear point list
-    ptList.clear();
+    this->ptList.clear();
 
     for (i = 0; i < srcHeight; i++)
     {
@@ -179,7 +191,7 @@ void laneft::find_point_list(unsigned char* src, int srcWidth, int srcHeight)
                 tmpPoint.y = i;
 
                 // Insert element
-                ptList.push_back(tmpPoint);
+                this->ptList.push_back(tmpPoint);
             }
         }
     }
@@ -195,8 +207,8 @@ void laneft::generate_line(std::vector<struct POINT>& line,
     struct POINT tmpPoint;
 
     // Find current hash space
-    hashRow = startPoint.y / hashRowStep;
-    hashCol = startPoint.x / hashColStep;
+    hashRow = startPoint.y / this->hashRowStep;
+    hashCol = startPoint.x / this->hashColStep;
 
     // Search points around current hash space
     for (i = 0; i < 3; i++)
@@ -215,20 +227,22 @@ void laneft::generate_line(std::vector<struct POINT>& line,
                 continue;
             }
 
-            for (k = 0; k < hashSpace.at(tmpRow * HASH_SPACE + tmpCol).size();
+            for (k = 0;
+                 k < this->hashSpace.at(tmpRow * HASH_SPACE + tmpCol).size();
                  k++)
             {
-                tmpPoint = hashSpace.at(tmpRow * HASH_SPACE + tmpCol).at(k);
+                tmpPoint =
+                    this->hashSpace.at(tmpRow * HASH_SPACE + tmpCol).at(k);
                 if ((tmpPoint.x - startPoint.x) * (tmpPoint.x - startPoint.x) +
                         (tmpPoint.y - startPoint.y) *
                             (tmpPoint.y - startPoint.y) <=
-                    maxDist * maxDist)
+                    this->maxDist * this->maxDist)
                 {
                     line.push_back(tmpPoint);
-                    hashSpace.at(tmpRow * HASH_SPACE + tmpCol)
-                        .erase(
-                            hashSpace.at(tmpRow * HASH_SPACE + tmpCol).begin() +
-                            k);
+                    this->hashSpace.at(tmpRow * HASH_SPACE + tmpCol)
+                        .erase(this->hashSpace.at(tmpRow * HASH_SPACE + tmpCol)
+                                   .begin() +
+                               k);
                     k--;
 
                     generate_line(line, tmpPoint);
@@ -246,23 +260,24 @@ void laneft::find_line()
     std::vector<struct POINT> tmpLine;
 
     // Create hash space
-    hashSpace.resize(HASH_SPACE * HASH_SPACE);
+    this->hashSpace.resize(HASH_SPACE * HASH_SPACE);
     for (i = 0; i < HASH_SPACE * HASH_SPACE; i++)
     {
-        hashSpace.at(i).clear();
+        this->hashSpace.at(i).clear();
     }
 
     // Insert point to hash space
-    for (i = 0; i < ptList.size(); i++)
+    for (i = 0; i < this->ptList.size(); i++)
     {
-        hashRow = ptList.at(i).y / hashRowStep;
-        hashCol = ptList.at(i).x / hashColStep;
+        hashRow = this->ptList.at(i).y / this->hashRowStep;
+        hashCol = this->ptList.at(i).x / this->hashColStep;
 
-        hashSpace.at(hashRow * HASH_SPACE + hashCol).push_back(ptList.at(i));
+        this->hashSpace.at(hashRow * HASH_SPACE + hashCol)
+            .push_back(this->ptList.at(i));
     }
 
     // Clear line handle
-    lineHandle.clear();
+    this->lineHandle.clear();
 
     // Generate line
     for (i = 0; i < HASH_SPACE * HASH_SPACE; i++)
@@ -270,15 +285,15 @@ void laneft::find_line()
         // Clear line
         tmpLine.clear();
 
-        for (j = 0; j < hashSpace.at(i).size(); j++)
+        for (j = 0; j < this->hashSpace.at(i).size(); j++)
         {
-            generate_line(tmpLine, hashSpace.at(i).at(j));
+            generate_line(tmpLine, this->hashSpace.at(i).at(j));
         }
 
         // Insert temp line to line handle
-        if (!tmpLine.empty() && (int)tmpLine.size() > lineTh)
+        if (!tmpLine.empty() && (int)tmpLine.size() > this->lineTh)
         {
-            lineHandle.push_back(tmpLine);
+            this->lineHandle.push_back(tmpLine);
         }
     }
 }
@@ -286,24 +301,26 @@ void laneft::find_line()
 // Clean line handle, reserve the closest point to side only.
 void laneft::clean_line(int imgWidth)
 {
-    for (unsigned int i = 0; i < lineHandle.size(); i++)
+    for (unsigned int i = 0; i < this->lineHandle.size(); i++)
     {
         // Sort line handle
-        sort(lineHandle.at(i).begin(), lineHandle.at(i).end(),
+        sort(this->lineHandle.at(i).begin(), this->lineHandle.at(i).end(),
              greater<POINT>());
 
         // Clean point
-        struct POINT tmpPoint = lineHandle.at(i).at(0);
+        struct POINT tmpPoint = this->lineHandle.at(i).at(0);
         if (tmpPoint.x < imgWidth / 2)
         {
-            for (unsigned int j = 1; j < lineHandle.at(i).size(); j++)
+            for (unsigned int j = 1; j < this->lineHandle.at(i).size(); j++)
             {
-                if (lineHandle.at(i).at(j).y == lineHandle.at(i).at(j - 1).y)
+                if (this->lineHandle.at(i).at(j).y ==
+                    this->lineHandle.at(i).at(j - 1).y)
                 {
-                    if (lineHandle.at(i).at(j).x <=
-                        lineHandle.at(i).at(j - 1).x)
+                    if (this->lineHandle.at(i).at(j).x <=
+                        this->lineHandle.at(i).at(j - 1).x)
                     {
-                        lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
+                        this->lineHandle.at(i).erase(
+                            this->lineHandle.at(i).begin() + j);
                         j--;
                     }
                 }
@@ -311,14 +328,16 @@ void laneft::clean_line(int imgWidth)
         }
         else
         {
-            for (unsigned int j = 0; j < lineHandle.at(i).size() - 1; j++)
+            for (unsigned int j = 0; j < this->lineHandle.at(i).size() - 1; j++)
             {
-                if (lineHandle.at(i).at(j).y == lineHandle.at(i).at(j + 1).y)
+                if (this->lineHandle.at(i).at(j).y ==
+                    this->lineHandle.at(i).at(j + 1).y)
                 {
-                    if (lineHandle.at(i).at(j).x >=
-                        lineHandle.at(i).at(j + 1).x)
+                    if (this->lineHandle.at(i).at(j).x >=
+                        this->lineHandle.at(i).at(j + 1).x)
                     {
-                        lineHandle.at(i).erase(lineHandle.at(i).begin() + j);
+                        this->lineHandle.at(i).erase(
+                            this->lineHandle.at(i).begin() + j);
                         j--;
                     }
                 }
@@ -342,28 +361,28 @@ double laneft::line_to_feature(int imgWidth)
     rCount = 0;
     lResult = 0;
     rResult = 0;
-    for (i = 0; i < lineHandle.size(); i++)
+    for (i = 0; i < this->lineHandle.size(); i++)
     {
-        tmpPoint.x = lineHandle.at(i).at(0).x;
-        tmpPoint.y = lineHandle.at(i).at(0).y;
-        avgPoint.x = lineHandle.at(i).at(0).x;
-        avgPoint.y = lineHandle.at(i).at(0).y;
-        for (j = 1; j < lineHandle.at(i).size(); j++)
+        tmpPoint.x = this->lineHandle.at(i).at(0).x;
+        tmpPoint.y = this->lineHandle.at(i).at(0).y;
+        avgPoint.x = this->lineHandle.at(i).at(0).x;
+        avgPoint.y = this->lineHandle.at(i).at(0).y;
+        for (j = 1; j < this->lineHandle.at(i).size(); j++)
         {
             /*
-            if(tmpPoint.y < lineHandle.at(i).at(j).y)
+            if(tmpPoint.y < this->lineHandle.at(i).at(j).y)
             {
-                tmpPoint.y = lineHandle.at(i).at(j).y;
-                tmpPoint.x = lineHandle.at(i).at(j).x;
+                tmpPoint.y = this->lineHandle.at(i).at(j).y;
+                tmpPoint.x = this->lineHandle.at(i).at(j).x;
             }
             */
 
-            avgPoint.x += lineHandle.at(i).at(j).x;
-            avgPoint.y += lineHandle.at(i).at(j).y;
+            avgPoint.x += this->lineHandle.at(i).at(j).x;
+            avgPoint.y += this->lineHandle.at(i).at(j).y;
         }
 
-        avgPoint.x = (double)avgPoint.x / (double)lineHandle.at(i).size();
-        avgPoint.y = (double)avgPoint.y / (double)lineHandle.at(i).size();
+        avgPoint.x = (double)avgPoint.x / (double)this->lineHandle.at(i).size();
+        avgPoint.y = (double)avgPoint.y / (double)this->lineHandle.at(i).size();
 
         if (tmpPoint.x < imgWidth / 2)
         {
@@ -393,10 +412,12 @@ double laneft::line_to_feature(int imgWidth)
 double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
 {
     // Find hash step
-    hashRowStep = (srcHeight % HASH_SPACE == 0) ? srcHeight / HASH_SPACE
-                                                : srcHeight / HASH_SPACE + 1;
-    hashColStep = (srcWidth % HASH_SPACE == 0) ? srcWidth / HASH_SPACE
-                                               : srcWidth / HASH_SPACE + 1;
+    this->hashRowStep = (srcHeight % HASH_SPACE == 0)
+                            ? srcHeight / HASH_SPACE
+                            : srcHeight / HASH_SPACE + 1;
+    this->hashColStep = (srcWidth % HASH_SPACE == 0)
+                            ? srcWidth / HASH_SPACE
+                            : srcWidth / HASH_SPACE + 1;
 
     // Clear vectors
     clear_hash_space();
@@ -407,7 +428,7 @@ double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
     find_line();
 
     // Processing line height filter
-    if (lineHeightTh > 0)
+    if (this->lineHeightTh > 0)
     {
         line_height_filter();
     }
@@ -423,20 +444,22 @@ void laneft::line_height_filter()
     unsigned int i, j;
     int yMax, yMin;
 
-    for (i = 0; i < lineHandle.size(); i++)
+    for (i = 0; i < this->lineHandle.size(); i++)
     {
-        yMax = lineHandle.at(i).at(0).y;
-        yMin = lineHandle.at(i).at(0).y;
-        for (j = 1; j < lineHandle.at(i).size(); j++)
+        yMax = this->lineHandle.at(i).at(0).y;
+        yMin = this->lineHandle.at(i).at(0).y;
+
+        for (j = 1; j < this->lineHandle.at(i).size(); j++)
         {
-            if (yMax < lineHandle.at(i).at(j).y)
-                yMax = lineHandle.at(i).at(j).y;
-            if (yMin > lineHandle.at(i).at(j).y)
-                yMin = lineHandle.at(i).at(j).y;
+            if (yMax < this->lineHandle.at(i).at(j).y)
+                yMax = this->lineHandle.at(i).at(j).y;
+            if (yMin > this->lineHandle.at(i).at(j).y)
+                yMin = this->lineHandle.at(i).at(j).y;
         }
-        if (yMax - yMin < lineHeightTh)
+
+        if (yMax - yMin < this->lineHeightTh)
         {
-            lineHandle.erase(lineHandle.begin() + i);
+            this->lineHandle.erase(this->lineHandle.begin() + i);
             i--;
         }
     }

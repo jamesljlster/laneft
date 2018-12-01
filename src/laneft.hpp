@@ -16,8 +16,17 @@ class laneft
     };
 
    public:
+    enum LANE_TYPE
+    {
+        LANE,
+        LINE
+    };
+
     laneft();
+    laneft(enum LANE_TYPE laneType);
     ~laneft();
+
+    void set_lane_type(enum LANE_TYPE laneType);
 
     double get_feature(unsigned char* src, int srcWidth, int srcHeight);
 
@@ -26,9 +35,8 @@ class laneft
     void set_line_height_filter(int threshold);
 
    protected:
-    std::vector<struct POINT> ptList;
-    std::vector<std::vector<struct POINT> > hashSpace;
-    std::vector<std::vector<struct POINT> > lineHandle;
+    // Member functions
+    void laneft_init(enum LANE_TYPE laneType);
 
     void clear_hash_space();
     void del_hash_space();
@@ -45,6 +53,13 @@ class laneft
 
     int sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row,
                  int col);
+
+    // Member variables
+    enum LANE_TYPE laneType = LANE_TYPE::LANE;
+
+    std::vector<struct POINT> ptList;
+    std::vector<std::vector<struct POINT> > hashSpace;
+    std::vector<std::vector<struct POINT> > lineHandle;
 
     int hashRowStep;
     int hashColStep;
