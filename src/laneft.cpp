@@ -88,8 +88,8 @@ void laneft::laneft_init(enum laneft::LANE_TYPE laneType)
 laneft::~laneft()
 {
     this->ptList.clear();
-    del_hash_space();
-    del_line_handle();
+    this->del_hash_space();
+    this->del_line_handle();
 }
 
 void laneft::set_find_point_rule(int maskSize, int threshold)
@@ -120,7 +120,7 @@ void laneft::clear_hash_space()
 
 void laneft::del_hash_space()
 {
-    clear_hash_space();
+    this->clear_hash_space();
     this->hashSpace.clear();
 }
 
@@ -135,7 +135,7 @@ void laneft::clear_line_handle()
 
 void laneft::del_line_handle()
 {
-    clear_line_handle();
+    this->clear_line_handle();
     this->lineHandle.clear();
 }
 
@@ -184,7 +184,7 @@ void laneft::find_point_list(unsigned char* src, int srcWidth, int srcHeight)
     {
         for (j = 0; j < srcWidth; j++)
         {
-            if (sum_mask(src, srcWidth, srcHeight, i, j) >= tmpTh)
+            if (this->sum_mask(src, srcWidth, srcHeight, i, j) >= tmpTh)
             {
                 // Set temp point
                 tmpPoint.x = j;
@@ -245,7 +245,7 @@ void laneft::generate_line(std::vector<struct POINT>& line,
                                k);
                     k--;
 
-                    generate_line(line, tmpPoint);
+                    this->generate_line(line, tmpPoint);
                 }
             }
         }
@@ -287,7 +287,7 @@ void laneft::find_line()
 
         for (j = 0; j < this->hashSpace.at(i).size(); j++)
         {
-            generate_line(tmpLine, this->hashSpace.at(i).at(j));
+            this->generate_line(tmpLine, this->hashSpace.at(i).at(j));
         }
 
         // Insert temp line to line handle
@@ -420,23 +420,23 @@ double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
                             : srcWidth / HASH_SPACE + 1;
 
     // Clear vectors
-    clear_hash_space();
-    clear_line_handle();
+    this->clear_hash_space();
+    this->clear_line_handle();
 
     // Find feature
-    find_point_list(src, srcWidth, srcHeight);
-    find_line();
+    this->find_point_list(src, srcWidth, srcHeight);
+    this->find_line();
 
     // Processing line height filter
     if (this->lineHeightTh > 0)
     {
-        line_height_filter();
+        this->line_height_filter();
     }
 
     // Clean line
-    clean_line(srcWidth);
+    this->clean_line(srcWidth);
 
-    return line_to_feature(srcWidth);
+    return this->line_to_feature(srcWidth);
 }
 
 void laneft::line_height_filter()
