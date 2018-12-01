@@ -49,6 +49,8 @@ class laneft
     void find_line();
     void clean_line(int imgWidth);
     void line_height_filter();
+
+    double lane_to_feature(int imgWidth);
     double line_to_feature(int imgWidth);
 
     int sum_mask(unsigned char* src, int srcWidth, int srcHeight, int row,

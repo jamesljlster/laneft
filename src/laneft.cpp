@@ -346,7 +346,7 @@ void laneft::clean_line(int imgWidth)
     }
 }
 
-double laneft::line_to_feature(int imgWidth)
+double laneft::lane_to_feature(int imgWidth)
 {
     unsigned int i, j;
 
@@ -409,6 +409,37 @@ double laneft::line_to_feature(int imgWidth)
     return result;
 }
 
+double laneft::line_to_feature(int imgWidth)
+{
+    unsigned int i, j;
+
+    struct POINT avgPoint;
+
+    int count = 0;
+    double result = 0;
+    double target = (double)imgWidth / 2.0;
+    for (i = 0; i < this->lineHandle.size(); i++)
+    {
+        avgPoint.x = 0;
+        avgPoint.y = 0;
+
+        for (j = 0; j < this->lineHandle.at(i).size(); j++)
+        {
+            avgPoint.x += this->lineHandle.at(i).at(j).x;
+            // avgPoint.y += this->lineHandle.at(i).at(j).y;
+        }
+
+        avgPoint.x = (double)avgPoint.x / (double)this->lineHandle.at(i).size();
+        // avgPoint.y = (double)avgPoint.y /
+        // (double)this->lineHandle.at(i).size();
+
+        result += target - avgPoint.x;
+        count++;
+    }
+
+    return result / (double)count;
+}
+
 double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
 {
     // Find hash step
@@ -436,7 +467,15 @@ double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
     // Clean line
     this->clean_line(srcWidth);
 
-    return this->line_to_feature(srcWidth);
+    // Get feature
+    if (this->laneType == laneft::LANE_TYPE::LANE)
+    {
+        return this->lane_to_feature(srcWidth);
+    }
+    else
+    {
+        return this->line_to_feature(srcWidth);
+    }
 }
 
 void laneft::line_height_filter()
