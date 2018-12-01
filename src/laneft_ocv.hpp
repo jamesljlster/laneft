@@ -8,12 +8,11 @@
 class laneft_ocv : public laneft
 {
    public:
+    laneft_ocv() : laneft() {}
+    laneft_ocv(laneft::LANE_TYPE laneType) : laneft(laneType) {}
+
     double get_feature(cv::Mat src);
     void draw_line_onto(cv::Mat& dst);
-
-    void set_find_point_rule(int maskSize, int threshold);
-    void set_find_line_rule(int maxDist, int threshold);
-    void set_line_height_filter(int threshold);
 
    protected:
     cv::Scalar get_order_color(int order);
