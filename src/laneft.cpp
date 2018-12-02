@@ -421,7 +421,7 @@ double laneft::line_to_feature(int imgWidth)
     for (i = 0; i < this->lineHandle.size(); i++)
     {
         avgPoint.x = 0;
-        avgPoint.y = 0;
+        // avgPoint.y = 0;
 
         for (j = 0; j < this->lineHandle.at(i).size(); j++)
         {
@@ -437,7 +437,14 @@ double laneft::line_to_feature(int imgWidth)
         count++;
     }
 
-    return result / (double)count;
+    if (count)
+    {
+        return result / (double)count;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
