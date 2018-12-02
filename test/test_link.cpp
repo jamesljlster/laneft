@@ -6,6 +6,9 @@ using namespace std;
 
 int main()
 {
-	cout << "Hello" << endl;
-	return 0;
+    laneft_ocv laneOcv;
+
+    cout << "Hello" << endl;
+
+    return 0;
 }
