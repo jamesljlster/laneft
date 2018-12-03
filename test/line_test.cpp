@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
         draw_ctrl_simulation(src, src.cols / 2 - ctrlFeature, src.rows / 4 * 3);
 
         // Show result
+        cout << "Processing " << argv[i] << endl;
         imshow("Result", src);
         waitKey(0);
     }

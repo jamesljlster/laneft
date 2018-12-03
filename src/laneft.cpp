@@ -3,7 +3,7 @@
 
 #include "laneft.hpp"
 
-#define HASH_SPACE 10
+#define HASH_SPACE 20
 
 #define DEFAULT_MASK_SIZE 1
 #define DEFAULT_POINT_TH 128
