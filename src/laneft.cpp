@@ -472,7 +472,7 @@ double laneft::get_feature(unsigned char* src, int srcWidth, int srcHeight)
     }
 
     // Clean line
-    this->clean_line(srcWidth);
+    // this->clean_line(srcWidth);
 
     // Get feature
     if (this->laneType == laneft::LANE_TYPE::LANE)
